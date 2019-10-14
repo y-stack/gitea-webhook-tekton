@@ -82,5 +82,24 @@ spec:
             }' \
             -v;
 
+          curl -f -u $ADMIN_USERNAME:$ADMIN_PASSWORD $GITEA_API/v1/repos/ExampleSource/tekton-y-build/hooks \
+            | grep gitea-webhook-tekton || \
+          curl -f -u $ADMIN_USERNAME:$ADMIN_PASSWORD $GITEA_API/v1/repos/ExampleSource/tekton-y-build/hooks \
+            --retry 3 \
+            -H 'Content-Type:application/json' \
+            -d '{
+              "active": true,
+              "branch_filter": "string",
+              "config": {
+                "content_type": "json",
+                "url": "http://gitea-webhook-tekton/webhook"
+              },
+              "events": [
+                "push"
+              ],
+              "type": "gitea"
+            }' \
+            -v;
+
       restartPolicy: Never
   backoffLimit: 3

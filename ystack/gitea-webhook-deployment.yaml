@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webook-gitea
+  labels:
+    app: webook-gitea
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: webook-gitea
+  template:
+    metadata:
+      labels:
+        app: webook-gitea
+    spec:
+      serviceAccountName: tekton-webhooks
+      containers:
+      - name: webook-gitea
+        #ec5e55c# image: solsson/gitea-webhook-tekton@sha256:075c46104b48512312f5ac7a6e69973f50a771253dd265052e95561b21e17976
+        #1b86632# image: solsson/gitea-webhook-tekton@sha256:4bf43771c86acf6d58dc9c5e03722ecd1f924b95ae9b2fcd1b53266c2dfea8c0
+        image: builds-registry.ystack.svc.cluster.local/ystack/gitea-webhook-tekton
+        env:
+        - name: PORT
+          value: "8080"
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: config
+          mountPath: /app
+      volumes:
+      - name: config
+        configMap:
+          name: gitea-tekton-webhook
