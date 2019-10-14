@@ -7,5 +7,6 @@ resources:
 - gitea-webhook-deployment.yaml
 configMapGenerator:
 - name: gitea-tekton-webhook
+  namespace: ystack
   files:
   - config.yaml
