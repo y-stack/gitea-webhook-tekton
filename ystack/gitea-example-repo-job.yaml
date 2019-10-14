@@ -1,0 +1,86 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gitea-webhook-example-repo
+  namespace: ystack
+spec:
+  template:
+    spec:
+      containers:
+      - name: curl
+        image: solsson/curl@sha256:7812c7af01cb956cc2d86f299d4b4970db54b7069804da7d8a509d6746480004
+        env:
+        - name: GITEA_API
+          valueFrom:
+            secretKeyRef:
+              name: git-automation
+              key: endpoint
+        - name: ADMIN_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: git-automation
+              key: username
+        - name: ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: git-automation
+              key: password
+        command:
+        - bash
+        - -ce
+        - |
+
+          curl $GITEA_API \
+            --retry-connrefused \
+            --retry 10 \
+            -I | grep HTTP;
+
+          curl -f -u $ADMIN_USERNAME:$ADMIN_PASSWORD $GITEA_API/v1/users/webhook-tekton-admin || \
+          curl -f -u $ADMIN_USERNAME:$ADMIN_PASSWORD $GITEA_API/v1/admin/users \
+            --retry 3 \
+            -H 'Content-Type:application/json' \
+            -d '{
+              "email": "webhook-tekton-admin@example.com",
+              "full_name": "webhook-tekton-admin",
+              "login_name": "webhook-tekton-admin",
+              "must_change_password": false,
+              "password": "test",
+              "send_notify": false,
+              "source_id": 0,
+              "username": "webhook-tekton-admin"
+            }' \
+            -v;
+
+          curl -f -u $ADMIN_USERNAME:$ADMIN_PASSWORD $GITEA_API/v1/orgs/ExampleSource || \
+          curl -f -u $ADMIN_USERNAME:$ADMIN_PASSWORD $GITEA_API/v1/orgs \
+            --retry 3 \
+            -H 'Content-Type:application/json' \
+            -d '{
+              "description": "Examples for Y-stack automation",
+              "full_name": "ExampleSource",
+              "location": "",
+              "repo_admin_change_team_access": true,
+              "username": "ExampleSource",
+              "visibility": "public",
+              "website": "https://github.com/y-stack/gitea-webhook-tekton"
+            }' \
+            -v;
+
+          curl -f -u $ADMIN_USERNAME:$ADMIN_PASSWORD $GITEA_API/v1/repos/ExampleSource/tekton-y-build || \
+          curl -f -u $ADMIN_USERNAME:$ADMIN_PASSWORD $GITEA_API/v1/org/ExampleSource/repos \
+            --retry 3 \
+            -H 'Content-Type:application/json' \
+            -d '{
+              "auto_init": false,
+              "description": "Source built using skaffold + y-build",
+              "gitignores": "",
+              "issue_labels": "",
+              "license": "",
+              "name": "tekton-y-build",
+              "private": false,
+              "readme": ""
+            }' \
+            -v;
+
+      restartPolicy: Never
+  backoffLimit: 3
