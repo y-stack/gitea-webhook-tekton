@@ -1,5 +1,5 @@
-namespace: ystack
 resources:
+- ystack-skaffold-task.yaml
 - gitea-example-repo-job.yaml
 - rbac-tekton-webhooks-serviceaccount.yaml
 - rbac-tekton-edit-binding.yaml

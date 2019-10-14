@@ -5,6 +5,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: tekton-webhooks
+  namespace: ystack
 roleRef:
   kind: ClusterRole
   name: tekton-aggregate-edit
