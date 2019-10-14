@@ -35,10 +35,10 @@ func CreateTaskRun(namespace string, serviceAccount string, taskRefName string, 
 			tb.TaskRunServiceAccount(serviceAccount),
 			tb.TaskRunTaskRef(taskRefName), // tb.TaskRefKind(v1alpha1.NamespacedTaskKind), tb.TaskRefAPIVersion("a1")),
 			tb.TaskRunInputs(
-				tb.TaskRunInputsResource("git-source", tb.TaskResourceBindingRef(gitSourceResourceName)),
+				tb.TaskRunInputsResource("source", tb.TaskResourceBindingRef(gitSourceResourceName)),
 			),
 			tb.TaskRunOutputs(
-				tb.TaskRunOutputsResource("docker-image", tb.TaskResourceBindingRef(dockerImageResourceName)),
+				tb.TaskRunOutputsResource("image", tb.TaskResourceBindingRef(dockerImageResourceName)),
 			),
 		),
 	)
