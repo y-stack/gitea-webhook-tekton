@@ -1,7 +1,10 @@
 FROM golang:1.13.1-alpine3.10@sha256:2293e952c79b8b3a987e1e09d48b6aa403d703cef9a8fa316d30ba2918d37367 as builder
 WORKDIR /build
 
-COPY *.go go.mod go.sum config.yaml ./
+COPY go.* ./
+RUN go mod download
+
+COPY *.go ./
 RUN go get ./...  && \
     CGO_ENABLED=0 go build -o gitea-webhook *.go
 
@@ -13,4 +16,4 @@ USER nobody
 ENTRYPOINT ["/usr/local/bin/gitea-webhook"]
 
 WORKDIR /app
-COPY --from=builder /build/config.yaml ./
+COPY config.yaml ./

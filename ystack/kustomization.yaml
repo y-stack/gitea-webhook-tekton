@@ -1,0 +1,12 @@
+resources:
+- ystack-skaffold-task.yaml
+- gitea-example-repo-job.yaml
+- rbac-tekton-webhooks-serviceaccount.yaml
+- rbac-tekton-edit-binding.yaml
+- gitea-webhook-service.yaml
+- gitea-webhook-deployment.yaml
+configMapGenerator:
+- name: gitea-tekton-webhook
+  namespace: ystack
+  files:
+  - config.yaml

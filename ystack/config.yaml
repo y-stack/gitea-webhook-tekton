@@ -1,0 +1,8 @@
+hooks:
+- repo: ExampleSource/tekton-y-build
+  secret: ""
+  taskinfo:
+    namespace: default
+    taskrefname: ystack-skaffold
+    gitsourceresourcename: example-tekton-ystack-source
+    dockerimageresourcename: ""

@@ -1,0 +1,17 @@
+apiVersion: skaffold/v1beta16
+kind: Config
+build:
+  tagPolicy:
+    gitCommit:
+      variant: CommitSha
+  artifacts:
+  - image: builds-registry.ystack.svc.cluster.local/ystack/gitea-webhook-tekton
+    context: .
+    custom:
+      buildCommand: y-build
+      dependencies:
+        dockerfile:
+          path: ./Dockerfile
+deploy:
+  kustomize:
+    path: ystack

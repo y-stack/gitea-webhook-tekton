@@ -1,0 +1,51 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: example-tekton-ystack-source
+  namespace: default
+spec:
+  type: git
+  params:
+    - name: url
+      # TODO we should create an application to get a proper auth string
+      # Public access failed with symptoms similar to https://github.com/tektoncd/pipeline/issues/1375
+      value: http://ystack-admin:ystack-admin-temp@git.ystack.svc.cluster.local/ExampleSource/tekton-y-build.git
+    - name: revision
+      value: master
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: example-tekton-ystack-image
+  namespace: default
+spec:
+  type: image
+  params:
+    - name: url
+      value: builds-registry.ystack.svc.cluster.local/ystack-examples/this-url-here-is-ignored-because-skaffold-yaml-sets-image
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: ystack-skaffold
+  namespace: default
+spec:
+  inputs:
+    params:
+    - name: ACTION
+      description: The Skaffold verb (build and run are suitable)
+      default: build
+    resources:
+    - name: source
+      type: git
+  steps:
+  - name: skaffold
+    workingdir: /workspace/source
+    image: builds-registry.ystack.svc.cluster.local/ystack/runner:ce7140085d5b90163aa9d8e56e6b6c091dfd818e
+    env:
+    - name: SKAFFOLD_CACHE_ARTIFACTS
+      value: "false"
+    command:
+    - skaffold
+    - build
