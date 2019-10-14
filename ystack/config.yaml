@@ -5,4 +5,4 @@ hooks:
     namespace: default
     taskrefname: ystack-skaffold
     gitsourceresourcename: example-tekton-ystack-source
-    dockerimageresourcename: example-tekton-ystack-image
+    dockerimageresourcename: ""

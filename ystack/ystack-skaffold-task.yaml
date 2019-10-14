@@ -39,10 +39,6 @@ spec:
     resources:
     - name: source
       type: git
-  outputs:
-    resources:
-    - name: image
-      type: image
   steps:
   - name: skaffold
     workingdir: /workspace/source

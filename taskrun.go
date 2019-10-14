@@ -27,6 +27,12 @@ func CreateTaskRun(namespace string, serviceAccount string, taskRefName string, 
 		log.Printf("failed to create pipeline clientset: %s", err)
 		return err
 	}
+	outputs := tb.TaskRunOutputs()
+	if dockerImageResourceName != "" {
+		outputs = tb.TaskRunOutputs(
+			tb.TaskRunOutputsResource("image", tb.TaskResourceBindingRef(dockerImageResourceName)),
+		)
+	}
 	tRun := tb.TaskRun(
 		fmt.Sprintf("taskrun-by-webhook-%d", time.Now().Unix()),
 		namespace,
@@ -37,9 +43,7 @@ func CreateTaskRun(namespace string, serviceAccount string, taskRefName string, 
 			tb.TaskRunInputs(
 				tb.TaskRunInputsResource("source", tb.TaskResourceBindingRef(gitSourceResourceName)),
 			),
-			tb.TaskRunOutputs(
-				tb.TaskRunOutputsResource("image", tb.TaskResourceBindingRef(dockerImageResourceName)),
-			),
+			outputs,
 		),
 	)
 
