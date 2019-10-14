@@ -46,7 +46,7 @@ spec:
   steps:
   - name: skaffold
     workingdir: /workspace/source
-    image: builds-registry.ystack.svc.cluster.local/ystack/runner:3dc838363c127cfad0f23ddb1b08579de8f432a2-dirty
+    image: builds-registry.ystack.svc.cluster.local/ystack/runner:ce7140085d5b90163aa9d8e56e6b6c091dfd818e
     env:
     - name: SKAFFOLD_NO_PRUNE
       value: "true" # already default in y-skaffold
